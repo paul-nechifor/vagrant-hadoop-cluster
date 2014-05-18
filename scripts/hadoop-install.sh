@@ -1,4 +1,4 @@
-HADOOP_TAR="http://mirrors.hostingromania.ro/apache.org/hadoop/common/hadoop-1.2.1/hadoop-1.2.1.tar.gz"
+HADOOP_TAR="http://www.eu.apache.org/dist/hadoop/common/hadoop-1.2.1/hadoop-1.2.1.tar.gz"
 
 if [ -d "/opt/hadoop" ]; then
     echo "I think you have hadoop. Not installing it."
