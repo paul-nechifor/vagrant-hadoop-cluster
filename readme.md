@@ -2,6 +2,8 @@
 
 A mini Hadoop cluster configuration in Vagrant with a variable number of slaves.
 
+![Vagrant Hadoop cluster](screenshot.png)
+
 ## Set Up
 
 ### In the project dir
