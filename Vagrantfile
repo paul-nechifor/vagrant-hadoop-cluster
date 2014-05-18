@@ -11,7 +11,8 @@ Vagrant.configure("2") do |config|
       v.memory = 1024
       v.cpus = 2
     end
-    master.vm.provision "shell", path: "provision/master.sh"
+    master.vm.provision "shell", path: "scripts/provision.sh",
+        args: "master #{nSlaves}"
   end
 
   (1..nSlaves).each do |i|
@@ -24,7 +25,8 @@ Vagrant.configure("2") do |config|
         v.memory = 512
         v.cpus = 1
       end
-      slave.vm.provision "shell", path: "provision/slave.sh"
+      slave.vm.provision "shell", path: "scripts/provision.sh",
+          args: "slave #{nSlaves}"
     end
   end
 end
