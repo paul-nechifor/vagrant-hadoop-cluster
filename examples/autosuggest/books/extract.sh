@@ -7,6 +7,6 @@ hadoop fs -rmr /txt
 hadoop fs -rmr /ngrams
 hadoop fs -copyFromLocal txt /txt
 hadoop jar ../target/autosuggest*.jar net.nechifor.autosuggest.App /txt /ngrams
-hadoop fs -cat /ngrams/part-00000
+hadoop fs -tail /ngrams/part-00000
 
 rm -fr txt

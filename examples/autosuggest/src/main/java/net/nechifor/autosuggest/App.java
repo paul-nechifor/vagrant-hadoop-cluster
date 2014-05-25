@@ -9,8 +9,7 @@ import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapred.*;
 
 import java.io.IOException;
-import java.util.Iterator;
-import java.util.StringTokenizer;
+import java.util.*;
 
 public class App {
     public static class Map extends MapReduceBase implements
@@ -18,21 +17,64 @@ public class App {
 
         private final static IntWritable one = new IntWritable(1);
         private Text word = new Text();
+        private int n = -1;
 
+        @Override
+        public void configure(JobConf job) {
+            super.configure(job);
+            n = job.getInt("n", 3);
+        }
+
+        @Override
         public void map(LongWritable key, Text value, OutputCollector<Text,
                 IntWritable> output, Reporter reporter) throws IOException {
+
             String line = value.toString();
-            StringTokenizer tokenizer = new StringTokenizer(line);
-            while (tokenizer.hasMoreTokens()) {
-                word.set(tokenizer.nextToken());
-                output.collect(word, one);
+            Scanner scanner = new Scanner(line);
+            LinkedList<String> l = new LinkedList<String>();
+
+            if (!extract(l, scanner, n - 1)) {
+                return;
             }
+
+            while (scanner.hasNext()) {
+                l.add(scanner.next().toLowerCase());
+                word.set(join(l, " "));
+                output.collect(word, one);
+                l.removeFirst();
+            }
+        }
+
+        private boolean extract(List<String> l, Scanner scanner, int n) {
+            for (int i = 0; i < n; i++) {
+                if (scanner.hasNext()) {
+                    l.add(scanner.next().toLowerCase());
+                } else {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        private String join(List<String> l, String sep) {
+            StringBuilder sb = new StringBuilder();
+            boolean first = true;
+            for (String e : l) {
+                sb.append(e);
+                if (first) {
+                    first = false;
+                } else {
+                    sb.append(sep);
+                }
+            }
+            return sb.toString();
         }
     }
 
     public static class Reduce extends MapReduceBase implements Reducer<Text,
             IntWritable, Text, IntWritable> {
 
+        @Override
         public void reduce(Text key, Iterator<IntWritable> values,
                 OutputCollector<Text, IntWritable> output, Reporter reporter)
                 throws IOException {
@@ -46,6 +88,7 @@ public class App {
 
     public static void main(String[] args) throws Exception {
         JobConf conf = new JobConf(App.class);
+        conf.setInt("n", 4);
         conf.setJobName("ngrams");
 
         conf.setOutputKeyClass(Text.class);
