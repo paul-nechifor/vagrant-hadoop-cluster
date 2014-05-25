@@ -1,5 +1,7 @@
 package net.nechifor.autosuggest;
 
+import org.apache.hadoop.fs.FileStatus;
+import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.LongWritable;
@@ -44,7 +46,7 @@ public class App {
 
     public static void main(String[] args) throws Exception {
         JobConf conf = new JobConf(App.class);
-        conf.setJobName("wordcount");
+        conf.setJobName("ngrams");
 
         conf.setOutputKeyClass(Text.class);
         conf.setOutputValueClass(IntWritable.class);
@@ -56,9 +58,25 @@ public class App {
         conf.setInputFormat(TextInputFormat.class);
         conf.setOutputFormat(TextOutputFormat.class);
 
-        FileInputFormat.setInputPaths(conf, new Path(args[0]));
-        FileOutputFormat.setOutputPath(conf, new Path(args[1]));
+        configureIo(args[0], args[1], conf);
 
         JobClient.runJob(conf);
+    }
+
+    private static void configureIo(String in, String out, JobConf conf)
+            throws IOException {
+        FileSystem fs = FileSystem.get(conf);
+        FileStatus[] statusList = fs.listStatus(new Path(in));
+
+        if (statusList == null) {
+            throw new IOException();
+        }
+
+        for (FileStatus status : statusList) {
+            FileInputFormat.addInputPath(conf, status.getPath());
+        }
+
+
+        FileOutputFormat.setOutputPath(conf, new Path(out));
     }
 }
