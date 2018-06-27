@@ -1,3 +1,7 @@
+# This repository has been moved to [gitlab.com/paul-nechifor/vagrant-hadoop-cluster](http://gitlab.com/paul-nechifor/vagrant-hadoop-cluster).
+
+Old readme:
+
 # Vagrant Hadoop Cluster
 
 A mini Hadoop cluster configuration in Vagrant with a variable number of slaves.
